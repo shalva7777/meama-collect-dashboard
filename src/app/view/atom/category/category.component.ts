@@ -3,10 +3,11 @@ import {NgxSmartModalService} from 'ngx-smart-modal';
 import {Category} from '../../models/atom/category/category';
 import {PagingLoader} from '../../models/loader';
 import {AccessService} from '../../services/access.service';
-import { Utils } from '../../services/utils';
+import {Utils} from '../../services/utils';
 import {CategoryService} from '../../services/category.service';
 import {LanguageService} from '../../services/language.service';
 import {Language} from '../../models/atom/language';
+import {StandartTranslation} from "../../models/standartTranslation";
 
 @Component({
   selector: 'app-category',
@@ -21,12 +22,16 @@ export class CategoryComponent implements OnInit {
               public categoryService: CategoryService,
               public languageService: LanguageService) {
     this.reloadAllData();
+    this.languageService.find(-1, -1, null).then(response => {
+      this.languages = response.resultList;
+    });
   }
 
   selectedCategory: Category;
   categories: Category [] = [];
   loader: PagingLoader = new PagingLoader(true, true);
   isManage = true;
+  languages: Language[];
 
   mainLanguage: Language;
   selectedFiles: FileList;
@@ -36,8 +41,8 @@ export class CategoryComponent implements OnInit {
   }
 
   reloadAllData() {
-    this.categoryService.findCategories(-1, -1, {active: true}).then((response) => {
-      this.categories = response.resultList;
+    this.categoryService.findCategoriesForNew(null).then((response) => {
+      this.categories = response;
     });
     this.languageService.findMainLanguage().then((response) => {
       this.mainLanguage = response;
@@ -72,8 +77,7 @@ export class CategoryComponent implements OnInit {
       this.selectedCategory.id = null;
       this.selectedCategory.imageUrl = null;
     } else {
-      // tslint:disable-next-line:new-parens
-      this.selectedCategory = new Category;
+      this.selectedCategory = new Category();
     }
     this.reloadAllData();
     this.modalService.getModal('categoryModal').open();
@@ -124,7 +128,24 @@ export class CategoryComponent implements OnInit {
     // });
     // this.selectedTranslation.referenceId = this.selectedCategory.id;
     // this.selectedTranslation.language = (JSON.parse(JSON.stringify(this.mainLanguage)) as Language);
-    this.reloadAllData();
+    const translationMap = {};
+    for (let mes of this.selectedCategory.translations) {
+      if (!translationMap[mes.language.code]) {
+        translationMap[mes.language.code] = mes;
+      }
+    }
+    for (const lang of this.languages) {
+      if (!translationMap[lang.code]) {
+        const translation = new StandartTranslation();
+        translation.language = lang;
+        this.selectedCategory.translations.push(translation);
+        translationMap[lang.code] = translation;
+      }
+    }
+    this.categoryService.findCategoriesForNew({id: this.selectedCategory.id}).then((response) => {
+      this.categories = response;
+      this.modalService.getModal('categoryModal').open();
+    });
   }
 
   updateCategory() {
@@ -137,6 +158,7 @@ export class CategoryComponent implements OnInit {
     // }
     this.reloadAllData();
   }
+
   // showTranslationModal(category) {
   //   this.selectedCategory = (JSON.parse(JSON.stringify(category)) as Category);
   //   this.modalService.getModal('categoryTranslationsModal').open(true);

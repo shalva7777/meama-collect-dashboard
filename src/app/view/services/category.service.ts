@@ -21,6 +21,10 @@ export class CategoryService {
     return this.baseService.get(this.url + '/advance/' + limit + '/' + offset, pathParams);
   }
 
+  findCategoriesForNew(pathParams: {}): Promise<Category[]> {
+    return this.baseService.get(this.url + '/for-new-category', pathParams);
+  }
+
   create(category: Category): Promise<Category> {
     return this.baseService.post(this.url, category);
   }

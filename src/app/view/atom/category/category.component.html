@@ -2,9 +2,9 @@
 <!--                  (uploadImageClick)="updateCategory()" [identifier]="'categoryImageModal'"-->
 <!--                  [prevFieldObject]="utils.getPrevObj()"></cap-upload-modal>-->
 
-<ngx-smart-modal *ngIf="isManage" #categoryTranslationsModal [identifier]="'categoryTranslationsModal'"
-                 [dismissable]="false" customClass="w-700">
-  <h3>Category Translations</h3>
+<!--<ngx-smart-modal *ngIf="isManage" #categoryTranslationsModal [identifier]="'categoryTranslationsModal'"-->
+<!--                 [dismissable]="false" customClass="w-700">-->
+<!--  <h3>Category Translations</h3>-->
 
 <!--  <div class="ngx-body">-->
 <!--    <cap-table [items]="selectedTranslations"-->
@@ -23,24 +23,36 @@
 <!--</ngx-smart-modal>-->
 
 <ngx-smart-modal *ngIf="isManage" #categoryModal [identifier]="'categoryModal'" [dismissable]="false">
-  <h3>Product Size Details</h3>
+  <h3>Details</h3>
 
   <div class="ngx-body" #categoryForm>
-    <cap-input label="Name" fieldName="name" [fieldObject]="selectedCategory"
-               fieldType="text" capPattern="^\S+.{2,50}$" [capRequired]="true"
-               alertText="Min 2 characters"></cap-input>
+    <cap-tabs #tabs>
+      <cap-tab tabTitle="Details" [linkAble]="false">
+        <cap-input label="Name" fieldName="name" [fieldObject]="selectedCategory"
+                   fieldType="text" capPattern="^\S+.{2,50}$" [capRequired]="true"
+                   alertText="Min 2 characters"></cap-input>
 
-    <cap-combo label="Parent Category" optionLabel="name" optionValue="id" [values]="categories" [capRequired]="false"
-               [returnObject]="true" fieldName="parentCategory" [fieldObject]="selectedCategory">
-    </cap-combo>
+        <cap-combo label="Parent Category" optionLabel="name" optionValue="id" [values]="categories"
+                   [capRequired]="false"
+                   [returnObject]="true" fieldName="parentCategory" [fieldObject]="selectedCategory">
+        </cap-combo>
 
-    <br>
-<!--    <div class="m-bottom-5 f-bold">Additional fields in default language {{mainLanguage?.name}}</div>-->
-<!--    <cap-input label="Name" fieldName="name" [fieldObject]="selectedTranslation"-->
-<!--               fieldType="text" capPattern="^.{1,50}$" [capRequired]="true"-->
-<!--               alertText="Min 2 character"></cap-input>-->
-<!--    <cap-textarea label="Description" fieldName="description" [fieldObject]="selectedTranslation"></cap-textarea>-->
-
+        <br>
+        <!--    <div class="m-bottom-5 f-bold">Additional fields in default language {{mainLanguage?.name}}</div>-->
+        <!--    <cap-input label="Name" fieldName="name" [fieldObject]="selectedTranslation"-->
+        <!--               fieldType="text" capPattern="^.{1,50}$" [capRequired]="true"-->
+        <!--               alertText="Min 2 character"></cap-input>-->
+        <!--    <cap-textarea label="Description" fieldName="description" [fieldObject]="selectedTranslation"></cap-textarea>-->
+      </cap-tab>
+      <cap-tab tabTitle="{{mes.language.name}}" [linkAble]="false" *ngFor="let mes of selectedCategory?.translations">
+        <div>
+          <div><span class="f-bold">{{mes.language.name}} - </span>Translation</div>
+          <cap-textarea fieldName="name"
+                        [fieldObject]="mes" [limited]="true"
+                        [characterLimit]="255"></cap-textarea>
+        </div>
+      </cap-tab>
+    </cap-tabs>
   </div>
   <div *ngIf="selectedCategory && selectedCategory.id">
     <button *ngIf="selectedCategory.active"
@@ -69,15 +81,15 @@
       </h3>
     </div>
   </div>
-<!--  <div class="cap-flex">-->
-<!--    <label class="btn btn-default">-->
-<!--      <input type="file" (change)="selectFile($event)">-->
-<!--    </label>-->
+  <!--  <div class="cap-flex">-->
+  <!--    <label class="btn btn-default">-->
+  <!--      <input type="file" (change)="selectFile($event)">-->
+  <!--    </label>-->
 
-<!--    <button class="btn btn-success" [disabled]="!selectedFiles"-->
-<!--            (click)="upload()">Upload-->
-<!--    </button>-->
-<!--  </div>-->
+  <!--    <button class="btn btn-success" [disabled]="!selectedFiles"-->
+  <!--            (click)="upload()">Upload-->
+  <!--    </button>-->
+  <!--  </div>-->
   <div class="clearfix"></div>
 
   <cap-table
@@ -89,22 +101,18 @@
     [pagination]="true"
     [viewMode]="true"
     [reloadEvent]="loader"
-    [duplicate]="isManage"
-    [advanceFilter]="true"
     [onPageChange]="getCategories"
-    [onFilteredClick]="getFilteredCategories"
     (onReloadClick)="reloadAllData()"
-
   >
-    <cap-column header="" field="imageUrl">
+    <cap-column header="ID" field="id" filtered="number"></cap-column>
+    <cap-column header="Name" field="name" filtered="text">
       <ng-template #dataTableCell let-item="item">
-        <div class="user-profile img-square cap-pointer cap-hover" title="Upload Image" (click)="openImageModal(item)">
-          <img [src]="item.imageUrl | secure | async" alt="NO IMAGE">
+        <div>
+          <span *ngIf="item.parentCategoryId">{{item.parentCategory.name + '->>>' + item.name}}</span>
+          <span *ngIf="!item.parentCategoryId">{{item.name}}</span>
         </div>
       </ng-template>
     </cap-column>
-    <cap-column header="ID" field="id" filtered="number" [sortable]="true"></cap-column>
-    <cap-column header="Name" field="name" filtered="text"></cap-column>
     <cap-column header="Active" field="active" filtered="checkbox">
       <ng-template #dataTableCell let-item="item">
         <div>
@@ -118,14 +126,14 @@
         <span *ngIf="item.parentCategory">{{item.parentCategory.name}}</span>
       </ng-template>
     </cap-column>
-<!--    <cap-column *ngIf="isManage" header="Translations">-->
-<!--      <ng-template #dataTableCell let-item="item">-->
-<!--        <button (click)="showTranslationModal(item)" class="cap-cursor btn btn-default btn-sm" title="Translations">-->
-<!--          <span *ngIf="item"-->
-<!--                class="fa fa-list font-size-15"></span>-->
-<!--        </button>-->
-<!--      </ng-template>-->
-<!--    </cap-column>-->
+    <!--    <cap-column *ngIf="isManage" header="Translations">-->
+    <!--      <ng-template #dataTableCell let-item="item">-->
+    <!--        <button (click)="showTranslationModal(item)" class="cap-cursor btn btn-default btn-sm" title="Translations">-->
+    <!--          <span *ngIf="item"-->
+    <!--                class="fa fa-list font-size-15"></span>-->
+    <!--        </button>-->
+    <!--      </ng-template>-->
+    <!--    </cap-column>-->
   </cap-table>
 
 </div>
