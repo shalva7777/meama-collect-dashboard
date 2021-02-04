@@ -69,15 +69,15 @@
       </h3>
     </div>
   </div>
-  <div class="cap-flex">
-    <label class="btn btn-default">
-      <input type="file" (change)="selectFile($event)">
-    </label>
+<!--  <div class="cap-flex">-->
+<!--    <label class="btn btn-default">-->
+<!--      <input type="file" (change)="selectFile($event)">-->
+<!--    </label>-->
 
-    <button class="btn btn-success" [disabled]="!selectedFiles"
-            (click)="upload()">Upload
-    </button>
-  </div>
+<!--    <button class="btn btn-success" [disabled]="!selectedFiles"-->
+<!--            (click)="upload()">Upload-->
+<!--    </button>-->
+<!--  </div>-->
   <div class="clearfix"></div>
 
   <cap-table
@@ -118,14 +118,14 @@
         <span *ngIf="item.parentCategory">{{item.parentCategory.name}}</span>
       </ng-template>
     </cap-column>
-    <cap-column *ngIf="isManage" header="Translations">
-      <ng-template #dataTableCell let-item="item">
-        <button (click)="showTranslationModal(item)" class="cap-cursor btn btn-default btn-sm" title="Translations">
-          <span *ngIf="item"
-                class="fa fa-list font-size-15"></span>
-        </button>
-      </ng-template>
-    </cap-column>
+<!--    <cap-column *ngIf="isManage" header="Translations">-->
+<!--      <ng-template #dataTableCell let-item="item">-->
+<!--        <button (click)="showTranslationModal(item)" class="cap-cursor btn btn-default btn-sm" title="Translations">-->
+<!--          <span *ngIf="item"-->
+<!--                class="fa fa-list font-size-15"></span>-->
+<!--        </button>-->
+<!--      </ng-template>-->
+<!--    </cap-column>-->
   </cap-table>
 
 </div>

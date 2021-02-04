@@ -30,9 +30,18 @@
                       routerLink="roles"><a (mousedown)="redirectTo($event,'roles')">Roles</a></li>
                 </ul>
               </li>
+              <li>
+                <a (click)="activateParenItem(Main)"><i class="fa fa-cogs"></i>Main<span
+                  class="dn fa fa-chevron-down"></span></a>
+                <ul class="nav child_menu" #Main>
+                  <li  routerLinkActive="active active-page"
+                       routerLink="categories">
+                    <a (mousedown)="redirectTo($event,'categories')">Categories</a></li>
+                </ul>
+              </li>
 <!--              *ngIf="accessService.containsGroupName('Settings')"-->
 <!--              *ngIf="accessService.containsPrivilege('language_manage')"-->
-              <li >
+              <li>
                 <a (click)="activateParenItem(settingsManagment)"><i class="fa fa-cogs"></i>Settings<span
                   class="dn fa fa-chevron-down"></span></a>
                 <ul class="nav child_menu" #settingsManagment>

@@ -6,6 +6,7 @@ import {DashboardComponent} from './view/dashboard/dashboard.component';
 import {UsersComponent} from './view/security/users/users.component';
 import {RolesComponent} from './view/security/roles/roles.component';
 import {LanguageComponent} from './view/atom/language/language.component';
+import {CategoryComponent} from './view/atom/category/category.component';
 
 const routes: Routes = [
   {path: 'login', component: LoginComponent},
@@ -20,6 +21,7 @@ const r: Routes = [
       {path: 'users', component: UsersComponent},
       {path: 'roles', component: RolesComponent},
       {path: 'languages', component: LanguageComponent},
+      {path: 'categories', component: CategoryComponent},
     ]
   }
 ];
