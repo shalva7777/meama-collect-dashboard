@@ -46,6 +46,8 @@ import {CapColumnComponent} from './view/components/cap-table/cap-column.compone
 import {CapTabComponent} from './view/components/cap-tabs/tab.component';
 import {LanguageService} from './view/services/language.service';
 import {LanguageComponent} from './view/atom/language/language.component';
+import {CategoryService} from './view/services/category.service';
+import {CategoryComponent} from './view/atom/category/category.component';
 
 @Injectable()
 export class XhrInterceptor implements HttpInterceptor {
@@ -89,6 +91,7 @@ export class XhrInterceptor implements HttpInterceptor {
     CapColumnComponent,
     CapTabComponent,
     LanguageComponent,
+    CategoryComponent,
   ],
   imports: [
     BrowserModule,
@@ -110,6 +113,7 @@ export class XhrInterceptor implements HttpInterceptor {
     RoleService,
     PrivilegeService,
     LanguageService,
+    CategoryService,
     {
       provide: APP_INITIALIZER,
       useFactory: (authService: AuthService) => function() {

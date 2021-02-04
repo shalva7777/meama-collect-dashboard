@@ -1,0 +1,131 @@
+<!--<cap-upload-modal [abilityToUpload]="isManage" [fieldObject]="selectedCategory" fieldName="imageUrl"-->
+<!--                  (uploadImageClick)="updateCategory()" [identifier]="'categoryImageModal'"-->
+<!--                  [prevFieldObject]="utils.getPrevObj()"></cap-upload-modal>-->
+
+<ngx-smart-modal *ngIf="isManage" #categoryTranslationsModal [identifier]="'categoryTranslationsModal'"
+                 [dismissable]="false" customClass="w-700">
+  <h3>Category Translations</h3>
+
+<!--  <div class="ngx-body">-->
+<!--    <cap-table [items]="selectedTranslations"-->
+<!--               [onPageChange]="reloadTranslationData">-->
+<!--      <cap-column header="ID" field="id"></cap-column>-->
+<!--      <cap-column header="Name" field="name"></cap-column>-->
+<!--      <cap-column header="Description" field="description"></cap-column>-->
+<!--      <cap-column header="Language" field="language">-->
+<!--        <ng-template #dataTableCell let-item="item">-->
+<!--          <span class="f-bold" *ngIf="item.language">{{item.language.name}}</span>-->
+<!--        </ng-template>-->
+<!--      </cap-column>-->
+<!--    </cap-table>-->
+<!--  </div>-->
+<!--  <button type="button" class="btn btn-default" (click)="categoryTranslationsModal.close()">Close</button>-->
+<!--</ngx-smart-modal>-->
+
+<ngx-smart-modal *ngIf="isManage" #categoryModal [identifier]="'categoryModal'" [dismissable]="false">
+  <h3>Product Size Details</h3>
+
+  <div class="ngx-body" #categoryForm>
+    <cap-input label="Name" fieldName="name" [fieldObject]="selectedCategory"
+               fieldType="text" capPattern="^\S+.{2,50}$" [capRequired]="true"
+               alertText="Min 2 characters"></cap-input>
+
+    <cap-combo label="Parent Category" optionLabel="name" optionValue="id" [values]="categories" [capRequired]="false"
+               [returnObject]="true" fieldName="parentCategory" [fieldObject]="selectedCategory">
+    </cap-combo>
+
+    <br>
+<!--    <div class="m-bottom-5 f-bold">Additional fields in default language {{mainLanguage?.name}}</div>-->
+<!--    <cap-input label="Name" fieldName="name" [fieldObject]="selectedTranslation"-->
+<!--               fieldType="text" capPattern="^.{1,50}$" [capRequired]="true"-->
+<!--               alertText="Min 2 character"></cap-input>-->
+<!--    <cap-textarea label="Description" fieldName="description" [fieldObject]="selectedTranslation"></cap-textarea>-->
+
+  </div>
+  <div *ngIf="selectedCategory && selectedCategory.id">
+    <button *ngIf="selectedCategory.active"
+            type="button" class="btn btn-danger left" data-dismiss="modal" (click)="deactivationConfirm()">
+      Deactivate
+    </button>
+    <button *ngIf="!selectedCategory.active"
+            type="button" class="btn btn-success left" data-dismiss="modal" (click)="activationConfirm()">Activate
+    </button>
+  </div>
+  <button type="button" class="btn btn-default" (click)="categoryModal.close()">Close</button>
+  <button *ngIf="(selectedCategory && selectedCategory.id)" type="button" class="btn btn-success"
+          (click)="updateCategory()" [disabled]="!utils.formIsValid(categoryForm)">Update
+  </button>
+  <button *ngIf="!(selectedCategory && selectedCategory.id)" type="button" class="btn btn-success"
+          (click)="saveCategory()"
+          [disabled]="!utils.formIsValid(categoryForm)">
+    Save
+  </button>
+</ngx-smart-modal>
+<div class="">
+  <div class="page-title">
+    <div class="title_left">
+      <h3>Categories <br>
+        <small>Manage Categories</small>
+      </h3>
+    </div>
+  </div>
+  <div class="cap-flex">
+    <label class="btn btn-default">
+      <input type="file" (change)="selectFile($event)">
+    </label>
+
+    <button class="btn btn-success" [disabled]="!selectedFiles"
+            (click)="upload()">Upload
+    </button>
+  </div>
+  <div class="clearfix"></div>
+
+  <cap-table
+    (rowDoubleClick)="showAddEditModal($event)"
+    (onAddButtonClick)="showAddModal($event)"
+    [addable]="isManage"
+    [editable]="isManage"
+    [searchable]="true"
+    [pagination]="true"
+    [viewMode]="true"
+    [reloadEvent]="loader"
+    [duplicate]="isManage"
+    [advanceFilter]="true"
+    [onPageChange]="getCategories"
+    [onFilteredClick]="getFilteredCategories"
+    (onReloadClick)="reloadAllData()"
+
+  >
+    <cap-column header="" field="imageUrl">
+      <ng-template #dataTableCell let-item="item">
+        <div class="user-profile img-square cap-pointer cap-hover" title="Upload Image" (click)="openImageModal(item)">
+          <img [src]="item.imageUrl | secure | async" alt="NO IMAGE">
+        </div>
+      </ng-template>
+    </cap-column>
+    <cap-column header="ID" field="id" filtered="number" [sortable]="true"></cap-column>
+    <cap-column header="Name" field="name" filtered="text"></cap-column>
+    <cap-column header="Active" field="active" filtered="checkbox">
+      <ng-template #dataTableCell let-item="item">
+        <div>
+          <i *ngIf="item.active" class="fa fa-check-circle f-16 green"></i>
+          <i *ngIf="!item.active" class="fa fa-times-circle f-16 red"></i>
+        </div>
+      </ng-template>
+    </cap-column>
+    <cap-column header="Parent Category" field="parentCategory">
+      <ng-template #dataTableCell let-item="item">
+        <span *ngIf="item.parentCategory">{{item.parentCategory.name}}</span>
+      </ng-template>
+    </cap-column>
+    <cap-column *ngIf="isManage" header="Translations">
+      <ng-template #dataTableCell let-item="item">
+        <button (click)="showTranslationModal(item)" class="cap-cursor btn btn-default btn-sm" title="Translations">
+          <span *ngIf="item"
+                class="fa fa-list font-size-15"></span>
+        </button>
+      </ng-template>
+    </cap-column>
+  </cap-table>
+
+</div>
