@@ -1,0 +1,67 @@
+<ngx-smart-modal *ngIf="isManage" #roleModal [identifier]="'roleModal'" [dismissable]="false">
+  <h3>Role Details</h3>
+  <div #roleForm class="ngx-body">
+
+    <cap-input label="Name" fieldName="name"
+               [fieldObject]="selectedRole" fieldType="text" capPattern="^\S+.{1,50}$" [capRequired]="true"
+               alertText="Min 2 characters"></cap-input>
+
+    <cap-color-picker [targetObject]="selectedRole" targetObjectField="color"></cap-color-picker>
+
+    <cap-tree-checkbox label="Privileges" [items]="privileges" viewName="name"
+                       [targetObject]="selectedRole" targetObjectField="rolePrivileges"
+                       identifier="code"></cap-tree-checkbox>
+
+  </div>
+  <button *ngIf="(selectedRole && selectedRole.id)" type="button" class="btn btn-danger left"
+          (click)="deleteRole()">Delete
+  </button>
+  <button type="button" class="btn btn-default" (click)="roleModal.close()">Close</button>
+  <button *ngIf="(selectedRole && selectedRole.id)" type="button" class="btn btn-success"
+          (click)="updateRole()" [disabled]="!utils.formIsValid(roleForm)">Update
+  </button>
+  <button *ngIf="!(selectedRole && selectedRole.id)" type="button" class="btn btn-success"
+          (click)="saveRole()"
+          [disabled]="!utils.formIsValid(roleForm)">
+    Save
+  </button>
+</ngx-smart-modal>
+
+<div class="">
+  <div class="page-title">
+    <div class="title_left">
+      <h3>Roles <br>
+        <small>Managing role records</small>
+      </h3>
+    </div>
+  </div>
+
+  <div class="clearfix"></div>
+
+  <cap-table
+    (rowDoubleClick)="showAddEditModal($event)"
+    (onAddButtonClick)="showAddModal($event)"
+    [addable]="isManage"
+    [editable]="isManage"
+    [searchable]="true"
+    (onTermSearch)="updateRolesData($event)"
+    [pagination]="true"
+    [reloadEvent]="loader"
+    [onPageChange]="getRoles"
+
+  >
+    <cap-column header="ID" field="id"></cap-column>
+    <cap-column header="Name" field="name"></cap-column>
+    <cap-column header="Privileges" field="privileges" type="list">
+      <ng-template #dataTableCell let-item="item">
+        <span class="cap-tag" *ngFor="let p of item.rolePrivileges">{{p.name}}</span>
+      </ng-template>
+    </cap-column>
+    <cap-column header="Color" field="color">
+      <ng-template #dataTableCell let-item="item">
+        <div class="cap-color-tag m-auto" [ngStyle]="{'background-color': item.color }"></div>
+      </ng-template>
+    </cap-column>
+  </cap-table>
+
+</div>

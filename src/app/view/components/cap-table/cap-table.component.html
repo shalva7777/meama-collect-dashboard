@@ -1,0 +1,255 @@
+<ngx-smart-modal #viewModal [identifier]="'viewModal'" [dismissable]="false" *ngIf="viewMode">
+  <h3>View Modal</h3>
+  <div *ngIf="selectedItem" class="ngx-body">
+    <table class="table table-bordered view-mode">
+      <tbody>
+      <tr *ngFor="let column of columns">
+        <th *ngIf="!(column.filtered == 'multiselect' || column.notObjectProperty)">{{column.header}}</th>
+        <td id="viewMode" *ngIf="!(column.filtered == 'multiselect' || column.notObjectProperty)">
+          <div *ngIf="!column.cellTemplate">{{selectedItem[column.field]}}</div>
+          <div *ngIf="column.cellTemplate" [ngTemplateOutlet]="column.cellTemplate"
+               [ngTemplateOutletContext]="{column: column, item: selectedItem}">
+          </div>
+        </td>
+      </tr>
+      </tbody>
+    </table>
+  </div>
+  <button type="button" class="btn btn-default" (click)="viewModal.close()">Close</button>
+</ngx-smart-modal>
+
+<ngx-smart-modal #columnViewModal [identifier]="'columnViewModal'" [dismissable]="false" *ngIf="selectedColumnItem">
+  <h3>View Mode</h3>
+  <div class="ngx-body">
+    <table class="table table-bordered view-mode">
+      <tbody>
+      <tr *ngFor="let key of utils.objectKeys(selectedColumnItem)">
+        <th>{{utils.splitAndUppercase(key)}}</th>
+        <td>
+          <div class="shorten"><span
+            *ngIf="!utils.isBoolean(selectedColumnItem[key]) && !utils.isImg(selectedColumnItem[key])">{{selectedColumnItem[key]}}</span>
+          </div>
+          <span *ngIf="utils.isBoolean(selectedColumnItem[key])">
+                <i class="fa f-16"
+                   [ngClass]="{'fa-check': selectedColumnItem[key], 'fa-close': !selectedColumnItem[key]}"></i>
+              </span>
+          <div *ngIf="utils.isImg(selectedColumnItem[key])" class="image-thumbnail">
+            <img [src]="selectedColumnItem[key] | secure | async"/>
+          </div>
+        </td>
+      </tr>
+      </tbody>
+    </table>
+  </div>
+  <button type="button" class="btn btn-default" (click)="columnViewModal.close()">Close</button>
+</ngx-smart-modal>
+
+<div class="row" id="{{identifier}}">
+  <div class="col-md-12 col-sm-12 col-xs-12">
+    <div class="x_panel">
+      <div class="x_content">
+
+        <div class="table-toolbar">
+          <div class="btn-group" role="group">
+            <label>
+              <input *ngIf="checkable" type="checkbox" style="margin-left: 8px"
+                     (change)="onCheckBoxClicked($event.target.checked)"/>
+            </label>
+          </div>
+          <div class="btn-group" role="group">
+            <button *ngIf="addable" type="button" class="btn btn-success" (click)="onAddButtonClicked()"><i
+              class="fa fa-plus-circle toolbar-button-icon"></i>Add
+            </button>
+          </div>
+          <div style="margin-left: 10px" class="btn-group" role="group">
+            <button *ngIf="indexable" type="button" class="btn btn-success" (click)="onIndexButtonClicked()"><i
+              class="toolbar-button-icon"></i>Index
+            </button>
+          </div>
+          <div class="btn-group" style="margin-left: 10px;" role="group">
+            <button *ngIf="sendSms" type="button" class="btn btn-success" (click)="onSendSmsClicked()"><i
+              class="fa fa-plus-circle toolbar-button-icon"></i>Send Sms
+            </button>
+          </div>
+
+          <div class="table-search">
+            <button [ngClass]="{'hide' : !beingFiltered}" type="button" class="btn btn-default"
+                    (click)="onFilteredClicked()" title="Search"><i class="fa fa-search f-16"></i>
+            </button>
+            <button [ngClass]="{'hide' : !beingFiltered}" type="button" class="btn btn-default"
+                    (click)="clearFilterInputs()" title="Clear"><i class="fa fa-trash f-16"></i>
+            </button>
+            <button *ngIf="advanceFilter && !advanceFilterAlwaysOn" type="button" class="btn btn-default"
+                    (click)="this.beingFiltered = !this.beingFiltered;" title="Filters"><i
+              class="fa fa-sliders"></i>
+            </button>
+            <button *ngIf="customButtonIcon" type="button" class="btn btn-default"
+                    (click)="onCustomClicked()"><i class="fa" ngClass="{{customButtonIcon}}"></i>
+            </button>
+            <label *ngIf="searchable"><input type="search" class="form-control input-sm table-search-bar"
+                                             placeholder="Search"
+                                             aria-controls="datatable"
+                                             (input)="onTermSearched($event.target.value)"></label>
+            <button type="button" class="btn btn-default m-left-20" (click)="onReloadClicked()"
+                    *ngIf="showReloadButton"
+                    title="Reload"><i
+              class="fa fa-rotate-left"></i></button>
+          </div>
+        </div>
+
+        <div *ngIf="advanceFilter || advanceFilterAlwaysOn"
+             [ngClass]="{'hide' : !advanceFilterAlwaysOn && !beingFiltered}"
+             class="table-toolbar advance-filter " (keyup.enter)="onFilteredClicked()">
+          <br>
+          <div *ngFor="let column of columns"
+               [ngClass]="{'filter-block' : column.filtered && column.filtered.length > 0, 'hide' : !column.filtered}">
+            <cap-input *ngIf="column.filtered == 'text' || column.filtered == 'number'" [fieldType]="column.filtered"
+                       [fieldObject]="filterRequest" fieldName="{{column.field}}"
+                       label="{{column.header}}"></cap-input>
+            <div *ngIf="column.filtered == 'date' || column.filtered == 'datetime-local'" class="cap-flex">
+              <div class="w-50 m-bottom-5 rel">
+                <div class="elips">{{'From ' + column.header}}</div>
+                <date-picker type="{{column.filtered}}" [object]="filterRequest"
+                             [fieldName]="'from' + capitalizeFirstLetter(column.field)"></date-picker>
+              </div>
+              <div class="w-50 m-bottom-5 rel">
+                <div class="elips">{{'To ' + column.header}}</div>
+                <date-picker type="{{column.filtered}}" [object]="filterRequest"
+                             [fieldName]="'to' + capitalizeFirstLetter(column.field)"></date-picker>
+              </div>
+            </div>
+            <div *ngIf="column.filtered == 'amount'" class="cap-flex">
+              <cap-input class="w-50" [fieldType]="number"
+                         [fieldObject]="filterRequest" fieldName="{{'from' + capitalizeFirstLetter(column.field)}}"
+                         label="{{'From ' + column.header}}"></cap-input>
+              <cap-input class="w-50" [fieldType]="number"
+                         [fieldObject]="filterRequest" fieldName="{{'to' + capitalizeFirstLetter(column.field)}}"
+                         label="{{'To ' + column.header}}"></cap-input>
+            </div>
+            <cap-combo *ngIf="column.filtered == 'combo'" [values]="column.filteredOptions"
+                       [fieldObject]="filterRequest" fieldName="{{column.filteredFieldName}}"
+                       label="{{column.header ? 'Select ' + column.header : 'Select ' + column.field}}"
+                       [optionLabel]="column.filteredOptionName" [optionValue]="column.filteredOptionValue"
+                       [returnObject]="column.filteredOptionReturnObject"></cap-combo>
+            <div *ngIf="column.filtered == 'multiselect'" class="m-bottom-5 rel"> {{'Select ' + column.header}}
+              <cap-multiselect [fieldObject]="filterRequest" [fieldName]="column.field"
+                               [textField]="column.filteredOptionValue" [idField]="'id'"
+                               [data]="column.filteredOptions"
+                               [returnFieldName]="column.returnFieldName"></cap-multiselect>
+            </div>
+            <cap-dynamic-component *ngIf="column.filtered == 'checkbox'"
+                                   fieldName="{{column.field}}" label="{{'Select ' + column.header + ' state'}}"
+                                   [object]="filterRequest" [searchable]="false"
+                                   [values]="[{id: true, name: column.header}, {id: false, name: 'Not ' + column.header }]"
+                                   returnFieldName="id"
+                                   [returnObject]="false">
+              <cap-dynamic-column field="name">
+                <ng-template #dynamicComboColumn let-item="item">
+                  <i *ngIf="item.id" class="fa fa-check green"><span class="font-open-sans"> {{column.header }}</span>
+                  </i>
+                  <i *ngIf="!item.id" class="fa fa-close red"><span
+                    class="font-open-sans"> Not {{column.header }}</span>
+                  </i>
+                </ng-template>
+              </cap-dynamic-column>
+            </cap-dynamic-component>
+            <cap-dynamic-component *ngIf="column.filtered == 'dynamic-combo'" [values]="column.filteredOptions"
+                                   [object]="filterRequest" fieldName="{{column.filteredFieldName}}"
+                                   label="{{'Select ' + column.header}}"
+                                   [returnFieldName]="column.filteredOptionValue"
+                                   [displayFieldName]="column.filteredOptionName"
+                                   [returnObject]="column.filteredOptionReturnObject"
+                                   [onSearch]="column.onDynamicSearchFunction">
+              <cap-dynamic-column *ngFor="let n of column.filteredOptionColumns" [field]="n"></cap-dynamic-column>
+            </cap-dynamic-component>
+          </div>
+        </div>
+        <div class="horizontal-scroll">
+          <table id="datatable" class="table table-striped">
+            <thead>
+            <tr>
+              <!--<th *ngFor="let column of columns" [ngClass]="{'hide' : column.hidden}">{{column.header}}</th>-->
+              <th *ngFor="let column of columns"
+                  [ngClass]="{'hide' : column.hidden,
+                              'sorting' : column.sortable,
+                              'sorting_asc' : (sortingObj['asc'] && sortingObj['orderBy'] == column.field),
+                              'sorting_desc' : (!sortingObj['asc'] && sortingObj['orderBy'] == column.field && column.sortable)}"
+                  (click)="sortingClicked(column.field, column.sortable)"> {{column.header}}
+              </th>
+              <th *ngIf="duplicate"></th>
+              <th *ngIf="viewMode"></th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr *ngFor="let item of items let i = index" (dblclick)="rowDoubleClicked(item)"
+                (click)="rowClicked(item)">
+              <td *ngFor="let column of columns" [ngClass]="{'hide' : column.hidden}">
+                <span *ngIf="!column.cellTemplate" class="rel"
+                      [ngClass]="{'cap-cursor': column.linkTo || column.viewMode}"
+                      (click)="additionalInfoOrRedirect(column, item[column.field])">
+                    {{item[column.field]}}
+                  <i *ngIf="item[column.field] && column.linkTo" class="fa fa-external-link column-additional-data"></i>
+                  <i *ngIf="item[column.field] && column.viewMode" class="fa fa-info-circle column-additional-data"></i>
+                </span>
+                <span *ngIf="column.cellTemplate" class="rel"
+                      [ngClass]="{'cap-cursor': column.linkTo || column.viewMode}"
+                      (click)="additionalInfoOrRedirect(column, item[column.field])">
+                  <div [ngTemplateOutlet]="column.cellTemplate"
+                       [ngTemplateOutletContext]="{column: column, item: item}"></div>
+                  <i *ngIf="item[column.field] && column.linkTo" class="fa fa-external-link column-additional-data"></i>
+                  <i *ngIf="item[column.field] && column.viewMode" class="fa fa-info-circle column-additional-data"></i>
+                </span>
+              </td>
+              <td *ngIf="duplicate">
+                <button class="cap-cursor btn btn-default btn-sm" (click)="makeCopy(item)" title="Duplicate">
+                  <i class="fa fa-copy f-16"></i>
+                </button>
+              </td>
+              <td *ngIf="viewMode">
+                <button class="cap-cursor btn btn-default btn-sm" (click)="openViewMode(i)" title="View Mode">
+                  <i class="fa fa-eye"></i>
+                </button>
+              </td>
+            </tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="table_footer">
+          <div *ngIf="pagination" class="dataTables_length">
+            <div>Show
+              <select #selectElem class="form-control"
+                      (change)="setNewPageNumOptions(selectElem.value)">
+                <option *ngFor="let p of pageNumOptions" [selected]="pageLimit == p.value"
+                        [value]="p.value">{{p.value}}
+                </option>
+              </select>
+              entries
+            </div>
+          </div>
+          <div *ngIf="pagination && recordsCount" class="records_count">
+            <span class="f-bold">{{recordsCount}}</span> records found
+          </div>
+          <div *ngIf="pagination" class="dataTables_paginate">
+            <ul class="pagination">
+              <li [ngClass]="{'hidden': currentPage == 0 || pageNum == 0}"><a
+                (click)="onFirstClicked()">First</a></li>
+              <li id="datatable-buttons_previous" [ngClass]="{'disabled': currentPage == 0 || pageNum == 0}"><a
+                (click)="onPrevClicked()" class="fa fa-chevron-left"></a>
+              </li>
+              <li *ngFor="let i of getTrimmedArray(5)" [ngClass]="{'active': currentPage == i - 1}">
+                <a class="page-num-active"
+                   (click)="onPageChanged(i)">{{i}}</a></li>
+              <li class="next" [ngClass]="{'disabled': currentPage == pageNum - 1 || pageNum == 0}"><a
+                (click)="onNextClicked()" class="fa fa-chevron-right"></a></li>
+              <li [ngClass]="{'hidden': currentPage == pageNum -1 || pageNum == 0}"><a
+                (click)="onLastClicked()">Last</a></li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+

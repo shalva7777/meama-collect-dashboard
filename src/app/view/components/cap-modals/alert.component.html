@@ -1,0 +1,7 @@
+<ngx-smart-modal #alertModal [identifier]="'alertModal'" [dismissable]="false">
+  <h3>Alert</h3>
+  <p *ngIf="alertModal.hasData()">
+    {{ alertModal.getData().body}}
+  </p>
+  <button class="btn btn-default" (click)="alertModal.close()">Close</button>
+</ngx-smart-modal>

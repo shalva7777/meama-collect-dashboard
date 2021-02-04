@@ -1,0 +1,11 @@
+<input type="{{type}}"
+       class="form-control"
+       [disabled]="disabled"
+       placeholder="{{placeholder}}"
+       [required]="isRequired"
+       [(ngModel)]="stringDate"
+       (input)="setFieldValue()"
+       #datePicker="ngModel">
+<small class="red" [hidden]="!isRequired || object[fieldName]">
+  {{validationText}}
+</small>

@@ -1,0 +1,16 @@
+<div *ngIf="fieldObject" class="w-100 m-bottom-5 rel">
+  <span>{{label}}</span>
+  <div class="rel">
+    <input #inputTemplate [required]="capRequired" [type]="fieldType ? fieldType : 'text'" class="form-control" placeholder="{{placeholder}}"
+           #req="ngModel" pattern="{{capPattern}}" [(ngModel)]="fieldObject[fieldName]" [disabled]="!enabled"
+           (keyup.enter)="onEnterPressed()">
+    <a *ngIf="fieldType == 'password'" class="additional-input-button"
+       (mouseover)="inputTemplate.type = 'text'" (mouseleave)="inputTemplate.type = 'password'">
+      <i class="fa fa-eye"></i>
+    </a>
+  </div>
+  <small class="cap-alert" [hidden]="!enabled || req.valid">
+    {{alertText}}
+  </small>
+</div>
+

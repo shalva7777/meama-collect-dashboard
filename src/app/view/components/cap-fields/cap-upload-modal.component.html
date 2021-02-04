@@ -1,0 +1,15 @@
+<ngx-smart-modal #uploadImageModal [identifier]="identifier ? identifier : 'uploadImageModal'" [dismissable]="false">
+      <h3><span *ngIf="abilityToUpload">Upload</span> Image</h3>
+      <div *ngIf="fieldObject" class="ngx-body">
+        <cap-upload *ngIf="abilityToUpload" [fieldObject]="fieldObject" fieldName="{{fieldName}}"
+                    [prevFieldObject]="prevFieldObject"></cap-upload>
+        <div *ngIf="!abilityToUpload && fieldObject && fieldObject[fieldName]" class="m-bottom-5 image-thumbnail">
+          <img *ngIf="(fieldObject && fieldObject[fieldName])" [src]="fieldObject[fieldName] | secure | async"/>
+        </div>
+      </div>
+  <button type="button" class="btn btn-default" (click)="uploadImageModal.close()">Close</button>
+        <button *ngIf="abilityToUpload" type="button" class="btn btn-success"
+                (click)="saveImage()">
+          Save
+        </button>
+</ngx-smart-modal>

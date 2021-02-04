@@ -1,0 +1,32 @@
+<div *ngIf="object" class="m-bottom-5 rel"><span [ngClass]="{'required' : isRequired}">{{label}}</span>
+  <div class="rel">
+    <input *ngIf="searchable" [disabled]="!enabled" class="form-control" (input)="onSearched($event.target.value)" (keydown)="keyDownFunction($event)"
+           placeholder="{{placeholder}}" [required]="isRequired"
+           #req="ngModel" [ngModel]="value">
+    <div *ngIf="!searchable" class="form-control">
+      <input class="invisible-input" (keydown)="keyDownFunction($event)" readonly>
+      <span *ngIf="value">{{value}}</span>
+      <span *ngIf="!value && placeholder">{{placeholder}}</span>
+    </div>
+    <a class="additional-input-button top-15"
+       (click)="object[fieldName] = null; value = null; inside = false; onDataChange.emit(null)"><i
+      class="fa fa-remove"></i></a>
+  </div>
+
+  <div *ngIf="inside" class="dynamic-combo-box">
+    <div *ngFor="let item of values; index as j" class="dynamic-combo-option" (click)="chooseOption(item)" id={{j}}>
+      <span *ngFor="let column of columns; index as i">
+        <span *ngIf="!column.colTemplate">{{item[column.field]}}</span>
+        <span *ngIf="column.colTemplate" [ngTemplateOutlet]="column.colTemplate"
+              [ngTemplateOutletContext]="{column: column, item: item}"></span>
+            <span *ngIf="i < columns.length - 1 && item[column.field]"> - </span>
+      </span>
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</div>
+<small class="cap-alert" [hidden]="!isRequired || (object && object[fieldName])">
+  {{alertText}}
+</small>
+
+

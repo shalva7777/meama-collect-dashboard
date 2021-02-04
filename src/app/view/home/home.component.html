@@ -1,0 +1,169 @@
+<body #body class="nav-md">
+<div class="container body">
+
+  <div id="loader" class="loader-mask hide">
+    <div class="loader"></div>
+  </div>
+
+  <div class="main_container">
+    <div class="col-md-3 left_col">
+      <div class="left_col scroll-view">
+        <div class="navbar nav_title" routerLink="dashboard">
+          <!--<a routerLink="dashboard" ><img src="assets/MEAMA_Logo_Horizontal.png" class="navbar_logo" /> </a>-->
+        </div>
+
+        <div class="clearfix"></div>
+        <!--        *ngIf="accessService.containsGroupName('User Management')"-->
+        <!--        *ngIf="accessService.containsPrivilege('user_view')"-->
+        <!--        *ngIf="accessService.containsPrivilege('role_view')"-->
+        <!-- sidebar menu -->
+        <div id="sidebar-menu" class="main_menu_side hidden-print main_menu">
+          <div class="menu_section">
+            <ul class="nav side-menu" #menu>
+              <li>
+                <a (click)="activateParenItem(userManagment)"><i class="fa fa-shield"></i>User Management<span
+                  class="dn fa fa-chevron-down"></span></a>
+                <ul class="nav child_menu" #userManagment>
+                  <li routerLinkActive="active active-page"
+                      routerLink="users"><a (mousedown)="redirectTo($event,'users')">Users</a></li>
+                  <li routerLinkActive="active active-page"
+                      routerLink="roles"><a (mousedown)="redirectTo($event,'roles')">Roles</a></li>
+                </ul>
+              </li>
+<!--              *ngIf="accessService.containsGroupName('Settings')"-->
+<!--              *ngIf="accessService.containsPrivilege('language_manage')"-->
+              <li >
+                <a (click)="activateParenItem(settingsManagment)"><i class="fa fa-cogs"></i>Settings<span
+                  class="dn fa fa-chevron-down"></span></a>
+                <ul class="nav child_menu" #settingsManagment>
+                  <li  routerLinkActive="active active-page"
+                      routerLink="languages">
+                    <a (mousedown)="redirectTo($event,'languages')">Languages</a></li>
+                </ul>
+              </li>
+            </ul>
+          </div>
+        </div>
+        <!-- /sidebar menu -->
+
+        <!-- /menu footer buttons -->
+        <div class="sidebar-footer hidden-small">
+        </div>
+        <!-- /menu footer buttons -->
+      </div>
+    </div>
+
+    <!-- top navigation -->
+    <div class="top_nav">
+      <div class="nav_menu rel">
+        <nav>
+          <div class="nav toggle" (click)="body.classList.toggle('nav-md'); body.classList.toggle('nav-sm')">
+            <a id="menu_toggle"><i class="fa fa-bars"></i></a>
+          </div>
+
+          <ul class="nav navbar-nav navbar-right">
+            <li class="" #userMenuDropDown>
+              <a *ngIf="authService.loggedInUser" class="user-profile dropdown-toggle" data-toggle="dropdown"
+                 aria-expanded="false" (click)="userMenuDropDown.classList.toggle('open')">
+<!--                <img *ngIf="authService.loggedInUser && authService.loggedInUser.imageUrl"-->
+<!--                     [src]="authService.loggedInUser.imageUrl | secure | async" alt="">-->
+                {{authService.loggedInUser.username}}
+                <span class=" fa fa-angle-down"></span>
+              </a>
+              <ul class="dropdown-menu dropdown-usermenu pull-right">
+
+                <!--                <li><a routerLink="profile">My Profile</a></li>-->
+                <!--                <li><a routerLink="my-tasks">My Tasks</a></li>-->
+                <li><a id="logout" (click)="logout()"><i class="fa fa-sign-out pull-right"></i> Log Out</a></li>
+              </ul>
+            </li>
+            <!--            <li role="presentation" class="dropdown" #notificationDropDown-->
+            <!--                (click)="notificationDropDown.classList.toggle('open')">-->
+            <!--              <a class="dropdown-toggle info-number" data-toggle="dropdown" aria-expanded="false"-->
+            <!--                 (click)="markAllAsSeen()">-->
+            <!--                <i class="fa fa-bell-o"></i>-->
+            <!--                <span *ngIf="myNotificationsCount && myNotificationsCount > 0"-->
+            <!--                      class="badge bg-green">{{myNotificationsCount}}</span>-->
+            <!--              </a>-->
+            <!--              <ul id="menu1" class="dropdown-menu list-unstyled msg_list" role="menu">-->
+            <!--                <li *ngFor="let notification of myNotifications" [ngClass]="{'read': notification.read}">-->
+            <!--                  <a (click)="onNotificationClicked(notification)" [routerLink]="notification.link">-->
+            <!--                    <span *ngIf="notification.imageUrl" class="image"><img *ngIf="notification.imageUrl"-->
+            <!--                                                                           src="assets/noimage.png"/></span>-->
+            <!--                    <span *ngIf="!notification.imageUrl" class="image"><img *ngIf="notification.imageUrl"-->
+            <!--                                                                            [src]="notification.imageUrl | secure | async"/></span>-->
+            <!--                    <span>-->
+            <!--                      <span>{{notification.notificationType}}</span>-->
+            <!--                      <span class="time">{{notification.creationDate | date:'dd/MM/yyyy HH:mm' }}</span>-->
+            <!--                    </span>-->
+            <!--                    <span class="message">-->
+            <!--                          {{notification.description}}-->
+            <!--                        </span>-->
+            <!--                  </a>-->
+            <!--                </li>-->
+            <!--                <li>-->
+            <!--                  <div class="text-center">-->
+            <!--                    <a routerLink="notifications">-->
+            <!--                      <strong>See All Notifications</strong>-->
+            <!--                      <i class="fa fa-angle-right"></i>-->
+            <!--                    </a>-->
+            <!--                  </div>-->
+            <!--                </li>-->
+            <!--              </ul>-->
+            <!--            </li>-->
+          </ul>
+        </nav>
+      </div>
+    </div>
+    <!-- /top navigation -->
+
+    <!-- page content -->
+    <div class="right_col" role="main">
+      <router-outlet></router-outlet>
+      <ngx-smart-modal [identifier]="'changePasswordModal'" [dismissable]="false">
+        <h3>Change Password</h3>
+        <div #changePasswordForm class="ngx-body">
+
+          <cap-input label="Old Password"
+                     fieldName="oldPassword" [fieldObject]="changePassword"
+                     fieldType="password" [capRequired]="true"
+                     alertText="Enter old password"></cap-input>
+
+          <cap-input label="New Password"
+                     fieldName="newPassword" [fieldObject]="changePassword"
+                     fieldType="password" capPattern="^\w{8,50}$" [capRequired]="true"
+                     alertText="Min 8 character"></cap-input>
+
+          <cap-input label="Repeat Password" fieldName="passwordRepeated"
+                     [fieldObject]="this" capPattern="^\w{8,50}$" [capRequired]="true"
+                     fieldType="password"></cap-input>
+          <small class="cap-alert"
+                 *ngIf="(changePassword &&
+                     (!changePassword.newPassword || !passwordRepeated || changePassword.newPassword != passwordRepeated) && (passwordRepeated && passwordRepeated.length > 1))">
+            Passwords don't match
+          </small>
+
+        </div>
+        <button type="button" class="btn btn-success"
+                (click)="updatePassword()"
+                [disabled]="!utils.formIsValid(changePasswordForm) || passwordRepeated != changePassword?.newPassword">
+          Update
+        </button>
+      </ngx-smart-modal>
+
+      <ngx-smart-modal [identifier]="'loginModal'" [dismissable]="false">
+        <h3>Session Expired</h3>
+        <div class="ngx-body">
+          <p>Your session expired. Enter password to continue session.</p>
+          <cap-input fieldName="enteredPassword" [fieldObject]="this" fieldType="password"
+                     (onEnter)="continueSession()"></cap-input>
+        </div>
+        <button type="button" class="btn btn-success"
+                (click)="continueSession()">Continue Session
+        </button>
+      </ngx-smart-modal>
+    </div>
+    <!-- /page content -->
+  </div>
+</div>
+</body>

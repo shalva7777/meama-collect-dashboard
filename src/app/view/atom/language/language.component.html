@@ -1,0 +1,64 @@
+<ngx-smart-modal *ngIf="isManage" #languageModal [identifier]="'languageModal'" [dismissable]="false">
+  <h3>Language Details</h3>
+
+  <div class="ngx-body" #languageForm>
+    <cap-input label="Code" fieldName="code" [fieldObject]="selectedLanguage"
+               fieldType="text" [capRequired]="true" capPattern="^(?!-)[a-zA-Z0-9_-]{1,20}$"
+               alertText="Alphanumeric characters, underscores and dashes allowed. Min 1 character"></cap-input>
+
+    <cap-input label="Name" fieldName="name" [fieldObject]="selectedLanguage"
+               fieldType="text" capPattern="^.{1,50}$" [capRequired]="true"
+               alertText="Min 1 character"></cap-input>
+  </div>
+  <button *ngIf="selectedLanguage?.id" type="button" class="btn btn-danger left"
+          (click)="delete()">Delete
+  </button>
+  <button *ngIf="selectedLanguage?.id && !selectedLanguage.main" type="button" class="btn btn-success left" (click)="markAsMainConfirm()">Mark
+    as Main
+  </button>
+  <button *ngIf="selectedLanguage?.id && selectedLanguage.main" type="button" class="btn btn-danger left" (click)="unmarkFromMainConfirm()">
+    Unmark from Main
+  </button>
+  <button type="button" class="btn btn-default right" (click)="languageModal.close()">Close</button>
+  <button *ngIf="selectedLanguage?.id" type="button" class="btn btn-success right" (click)="update()" [disabled]="!utils.formIsValid(languageForm)">
+    Update
+  </button>
+  <button *ngIf="!selectedLanguage?.id"  type="button" class="btn btn-success right"
+          (click)="save()"
+          [disabled]="!utils.formIsValid(languageForm)">
+    Save
+  </button>
+</ngx-smart-modal>
+
+<div class="">
+  <div class="page-title">
+    <div class="title_left">
+      <h3>Language <br>
+        <small>Manage Languages</small>
+      </h3>
+    </div>
+  </div>
+
+  <div class="clearfix"></div>
+
+  <cap-table
+    (rowDoubleClick)="showAddEditModal($event)"
+    (onAddButtonClick)="showAddModal($event)"
+    [addable]="isManage"
+    [editable]="isManage"
+    [searchable]="true"
+    [pagination]="true"
+    [reloadEvent]="loader"
+    [onPageChange]="getLanguages"
+  >
+    <cap-column header="ID" field="id"></cap-column>
+    <cap-column header="Code" field="code"></cap-column>
+    <cap-column header="Name" field="name"></cap-column>
+    <cap-column header="" field="main">
+      <ng-template #dataTableCell let-item="item">
+        <div *ngIf="item.main"><i class="fa fa-check-circle f-16 green"></i></div>
+      </ng-template>
+    </cap-column>
+  </cap-table>
+
+</div>

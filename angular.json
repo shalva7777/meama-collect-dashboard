@@ -11,6 +11,17 @@
       "prefix": "app",
       "architect": {
         "build": {
+          "allowedCommonJsDependencies": [
+            "rxjs/add/operator/toPromise",
+            "firebase/app",
+            "chart.js",
+            "@firebase/component",
+            "@firebase/util",
+            "xlsx",
+            "file-saver",
+            "lodash",
+            "rxjs/add/operator/map"
+          ],
           "builder": "@angular-devkit/build-angular:browser",
           "options": {
             "outputPath": "dist/meama-collect-dashboard",
@@ -21,12 +32,17 @@
             "aot": true,
             "assets": [
               "src/favicon.ico",
-              "src/assets"
+              "src/assets",
+              "src/main.css",
+              "src/manifest.json"
             ],
             "styles": [
               "src/styles.css"
             ],
-            "scripts": []
+            "scripts": [
+              "src/js/jquery.min.js",
+              "src/js/moment.min.js"
+            ]
           },
           "configurations": {
             "production": {
@@ -84,12 +100,17 @@
             "karmaConfig": "karma.conf.js",
             "assets": [
               "src/favicon.ico",
-              "src/assets"
+              "src/assets",
+              "src/main.css",
+              "src/manifest.json"
             ],
             "styles": [
               "src/styles.css"
             ],
-            "scripts": []
+            "scripts": [
+              "src/js/jquery.min.js",
+              "src/js/moment.min.js"
+            ]
           }
         },
         "lint": {

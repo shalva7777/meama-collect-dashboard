@@ -1,0 +1,25 @@
+<div class="container center cover-abs">
+  <div class="login-form-wrapper">
+    <img src="assets/MEAMA_Logo.png">
+    <h2 class="form-signin-heading">Vending Machine Management System</h2>
+    <iframe id="hiddenFrame" name="hiddenFrame" width="0" height="0" border="0" class="display-none"></iframe>
+    <form role="form" (submit)="login()" class="form-signin">
+      <input type="text"
+             class="form-control" id="username" name="username" [(ngModel)]="credentials.username"
+             placeholder="Username"/>
+      <div class="rel">
+        <input #password1 type="password"
+               class="form-control" id="password" name="password" [(ngModel)]="credentials.password"
+               placeholder="Password"/>
+        <a (mouseenter)="password1.type = 'text'" (mouseleave)="password1.type = 'password'" class="show-password">
+          <i class="fa fa-eye"></i>
+        </a>
+      </div>
+      <button type="submit" class="btn btn-lg btn-primary btn-block">Sign in</button>
+    </form>
+    <div *ngIf="errorMessage">
+      <span class="alert-text" *ngIf="errorMessage">{{errorMessage}}</span>
+      <!--<span class="alert-text" *ngIf="!errorMessage">There was a problem. Please try again.</span>-->
+    </div>
+  </div>
+</div>

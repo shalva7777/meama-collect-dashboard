@@ -1,0 +1,10 @@
+<ng-multiselect-dropdown [(ngModel)]="items" [settings]="{singleSelection: false,
+                                                                          idField: idField,
+                                                                          textField: textField,
+                                                                          selectAllText: 'Select All',
+                                                                          unSelectAllText: 'UnSelect All',
+                                                                          itemsShowLimit: 1,
+                                                                          allowSearchFilter: true}"
+                         (onSelect)="onSelected($event)"
+                         (onDeSelect)="onDeSelected($event)"
+                         [data]="data"></ng-multiselect-dropdown>

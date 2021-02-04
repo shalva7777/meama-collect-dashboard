@@ -1,0 +1,7 @@
+{
+  "/meama-collect/*": {
+    "target": "http://localhost:8080",
+    "secure": false,
+    "timeout": 720000
+  }
+}

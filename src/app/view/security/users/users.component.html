@@ -1,0 +1,179 @@
+<ngx-smart-modal *ngIf="changePasswordPrivilege" #changePasswordModal [identifier]="'changePasswordModal'"
+                 [dismissable]="false">
+  <h3>Change Password</h3>
+  <div #changePasswordForm>
+    <cap-input label="New Password"
+               fieldName="newPassword" [fieldObject]="changePassword"
+               fieldType="password" capPattern="^\w{8,50}$" [capRequired]="true"
+               alertText="Min 8 character"></cap-input>
+
+    <cap-input label="Repeat Password" fieldName="passwordRepeated"
+               [fieldObject]="this"
+               fieldType="password"></cap-input>
+    <small class="cap-alert"
+           [hidden]="!(changePassword && (!changePassword.newPassword || !passwordRepeated || changePassword.newPassword != passwordRepeated) &&
+               (passwordRepeated && passwordRepeated.length > 1))">
+      Passwords don't match
+    </small>
+
+  </div>
+  <button type="button" class="btn btn-default" (click)="changePasswordModal.close()">Close</button>
+  <button type="button" class="btn btn-success"
+          (click)="updatePassword()" [disabled]="!utils.formIsValid(changePasswordForm) || passwordRepeated != changePassword?.newPassword">Update
+  </button>
+</ngx-smart-modal>
+
+<ngx-smart-modal *ngIf="isManage" #userModal [identifier]="'userModal'" [dismissable]="false">
+  <h3>User Details</h3>
+  <div class="ngx-body" #userForm>
+    <cap-tabs #tabs>
+      <cap-tab tabTitle="Details" [linkAble]="false">
+<!--        <div class="m-bottom-5 image-thumbnail" *ngIf="selectedUser && selectedUser.id">-->
+<!--          <img *ngIf="selectedUser.imageUrl" [src]="selectedUser.imageUrl | secure | async"/>-->
+<!--        </div>-->
+
+        <cap-input label="Username" fieldName="username" [enabled]="!(selectedUser && selectedUser.id)"
+                   [fieldObject]="selectedUser" fieldType="text" capPattern="^(?!-)[a-zA-Z0-9_-]{5,20}$"
+                   [capRequired]="true"
+                   alertText="Alphanumeric characters, underscores and dashes allowed. Min 5 characters"></cap-input>
+
+        <cap-input *ngIf="!selectedUser?.id" label="Password"
+                   fieldName="password" [fieldObject]="selectedUser"
+                   fieldType="password" capPattern="^.{8,50}$" [capRequired]="true"
+                   alertText="Min 8 characters"></cap-input>
+
+        <cap-input *ngIf="!selectedUser?.id" label="Repeat Password" fieldName="passwordRepeated"
+                   [fieldObject]="this"
+                   fieldType="password"></cap-input>
+        <small class="cap-alert"
+               [hidden]="!(selectedUser && !selectedUser.id && (!selectedUser.password || !passwordRepeated || selectedUser.password != passwordRepeated) && (passwordRepeated && passwordRepeated.length > 1))">
+          Passwords don't match
+        </small>
+
+        <cap-input label="First Name" fieldName="firstName" [fieldObject]="selectedUser"
+                   fieldType="text" capPattern="^\S+.{2,50}$" [capRequired]="true"
+                   alertText="Min 2 characters"></cap-input>
+
+        <cap-input label="Last Name" fieldName="lastName" [fieldObject]="selectedUser"
+                   fieldType="text" capPattern="^\S+.{2,50}$" [capRequired]="true"
+                   alertText="Min 2 characters"></cap-input>
+
+        <cap-input label="SAP Code" fieldName="sapCode" [fieldObject]="selectedUser"
+                   fieldType="text"></cap-input>
+
+        <cap-input label="Personal ID &#8470;" fieldName="personalId" [fieldObject]="selectedUser"
+                   fieldType="string" capPattern="^[0-9]{11}$"
+                   [capRequired]="true" alertText="ID Number should be 11 characters long"></cap-input>
+
+        <cap-input label="Phone" fieldName="phone" [fieldObject]="selectedUser"
+                   fieldType="number" capPattern="^5[0-9]{8}$" alertText="Invalid mobile number"></cap-input>
+
+
+        <cap-input label="Email" fieldName="email" [fieldObject]="selectedUser"
+                   capPattern="^(?=.{1,50}$)[a-z]+[a-z0-9._]+@[a-z]+\.[a-z.]{2,5}$" [capRequired]="true"
+                   alertText="Invalid email"
+                   fieldType="text"></cap-input>
+
+        <cap-combo label="User Type" optionLabel="name" optionValue="id" [values]="userTypes" [capRequired]="true"
+                   [returnObject]="false" alertText="Cannot be empty"
+                   fieldName="type" [fieldObject]="selectedUser">
+        </cap-combo>
+
+        <!--<cap-checkbox [visible]="(selectedUser && selectedUser.id)" label="Active" fieldName="active"-->
+        <!--[fieldObject]="selectedUser"></cap-checkbox>-->
+      </cap-tab>
+      <cap-tab tabTitle="Roles" [linkAble]="false" *ngIf="selectedUser?.type != 'DISTRIBUTOR'  && selectedUser?.type != 'SERVICE'">
+
+
+        <cap-multi-checkbox [items]="roles" viewName="name"
+                            [targetObject]="selectedUser" targetObjectField="roles"
+                            identifier="id"></cap-multi-checkbox>
+      </cap-tab>
+    </cap-tabs>
+  </div>
+
+
+  <div *ngIf="selectedUser && selectedUser.id">
+    <button *ngIf="selectedUser.active"
+            type="button" class="btn btn-danger left" (click)="deactivationConfirm()">Deactivate
+    </button>
+    <button *ngIf="!selectedUser.active"
+            type="button" class="btn btn-success left" (click)="activationConfirm()">Activate
+    </button>
+    <button *ngIf="changePasswordPrivilege" type="button" class="btn btn-success left"
+            (click)="openEditPasswordModal()">Change Password
+    </button>
+  </div>
+  <button type="button" class="btn btn-default" (click)="userModal.close()">Close</button>
+  <button *ngIf="selectedUser && selectedUser.id" type="button" class="btn btn-success"
+          (click)="updateUser()" [disabled]="!utils.formIsValid(userForm)">Update
+  </button>
+  <button *ngIf="!(selectedUser && selectedUser.id)" type="button" class="btn btn-success"
+          (click)="saveUser()"
+          [disabled]="selectedUser && (!utils.formIsValid(userForm) || selectedUser.password != passwordRepeated) ">
+    Save
+  </button>
+</ngx-smart-modal>
+
+<div>
+  <div class="page-title">
+    <div class="title_left">
+      <h3>Users <br>
+        <small>Managing user records</small>
+      </h3>
+    </div>
+  </div>
+
+  <div class="clearfix"></div>
+
+  <cap-table
+    (rowDoubleClick)="showAddEditModal($event)"
+    (onAddButtonClick)="showAddModal($event)"
+    [addable]="isManage"
+    [editable]="isManage"
+    [searchable]="true"
+    [advanceFilter]="true"
+    [viewMode]="true"
+    [pagination]="true"
+    [reloadEvent]="loader"
+    [sortable]="true"
+    [onPageChange]="getUsers"
+    [onFilteredClick]="getFilteredUsers"
+    (onReloadClick)="reloadAllData()"
+  >
+    <cap-column header="ID" field="id" filtered="number"></cap-column>
+    <cap-column header="Active" field="active" filtered="checkbox">
+      <ng-template #dataTableCell let-item="item">
+        <div *ngIf="item.active"><i class="fa fa-check-circle f-16 green"></i></div>
+        <div *ngIf="!item.active"><i class="fa fa-times-circle f-16 red"></i></div>
+      </ng-template>
+    </cap-column>
+    <cap-column header="User Name" field="username" filtered="text"></cap-column>
+    <cap-column header="Personal ID" field="personalId" filtered="text"></cap-column>
+    <cap-column header="First Name" field="firstName" filtered="text" [sortable]="true"></cap-column>
+    <cap-column header="SAP Code" field="sapCode" filtered="text" [sortable]="true"></cap-column>
+    <cap-column header="Last Name" field="lastName" filtered="text" [sortable]="true"></cap-column>
+    <cap-column header="Email" field="email" filtered="text"></cap-column>
+    <cap-column header="Phone" field="phone" filtered="text"></cap-column>
+    <cap-column header="Creation Date" field="creationDate" filtered="date" [sortable]="true">
+      <ng-template #dataTableCell let-item="item">
+        <span>{{item.creationDate | date:'dd/MM/yyyy HH:mm' }}</span>
+      </ng-template>
+    </cap-column>
+    <cap-column header="Modification Date" field="modificationDate" filtered="date" [hidden]="true">
+      <ng-template #dataTableCell let-item="item">
+        <span>{{item.modificationDate | date:'dd/MM/yyyy HH:mm:ss' }}</span>
+      </ng-template>
+    </cap-column>
+    <cap-column header="Roles" field="roles" type="list" [sortable]="false" filtered="combo" [filteredOptions]="roles"
+                filteredFieldName="roleId" filteredOptionName="name" filteredOptionValue="id"
+                [filteredOptionReturnObject]="false">
+      <ng-template #dataTableCell let-item="item">
+        <span class="cap-tag" *ngFor="let role of item.roles"
+              [ngStyle]="{'background-color': role.color }">{{role.name}}</span>
+      </ng-template>
+    </cap-column>
+    <cap-column header="Rating" field="rating" filtered="amount" [sortable]="true"></cap-column>
+  </cap-table>
+
+</div>

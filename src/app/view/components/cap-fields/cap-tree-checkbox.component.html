@@ -1,0 +1,31 @@
+<div>
+  {{label}}
+  <div class="cap-flex">
+  <input type="text" class="form-control" placeholder="Search"
+         (input)="findInItems($event.target.value)">
+    <button type="button" class="btn btn-default m-left-5" (click)="clearItems()"><i class="fa fa-trash f-16"></i></button>
+  </div>
+  <div class="checkbox-group">
+    <div class="">
+      <div *ngFor="let key of keys" class="panel panel-default">
+        <div class="panel-heading">
+          <input type="checkbox" class="flat"
+                 [checked]="targetObject && targetObject[targetObjectField] && allChildrenChecked(key)"
+                 (change)="onParentChanged(key, $event.target.checked)"/>
+          <a (click)="collapse.classList.toggle('in')"> {{key}}</a>
+        </div>
+        <div #collapse class="panel-collapse collapse" [ngClass]="{'in' : targetObject && targetObject[targetObjectField] && atLeastOneChildChecked(key) && !allChildrenChecked(key)}">
+          <ul class="to_do margin-0">
+            <li *ngFor="let val of items[key]">
+              <label class="cap-cursor" for="{{val[identifier]}}">
+                <input id="{{val[identifier]}}" type="checkbox" class="flat"
+                       [checked]="targetObject && targetObject[targetObjectField] && arrayContains(targetObject[targetObjectField], val, identifier) > -1"
+                       (change)="onChanged(val, $event.target.checked)"> {{val[viewName]}}
+              </label>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

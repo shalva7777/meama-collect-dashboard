@@ -1,0 +1,16 @@
+<div *ngIf="fieldObject && fieldObject[fieldName]" class="m-bottom-5 image-thumbnail">
+  <i class="fa fa-remove cap-cursor additional-remove-button" (click)="removeImg()"></i>
+  <img *ngIf="(fieldObject && fieldObject[fieldName])" [src]="fieldObject[fieldName] | secure | async" />
+</div>
+<div class="cap-flex">
+  <label class="btn btn-default">
+    <input type="file" (change)="selectFile($event)">
+  </label>
+
+  <button class="btn btn-success" [disabled]="!selectedFiles"
+          (click)="upload()">Upload
+  </button>
+</div>
+  <small class="cap-alert">
+    File size shouldn't exceed 10 000 KB.
+  </small>

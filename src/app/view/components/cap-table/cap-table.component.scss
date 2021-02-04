@@ -1,0 +1,72 @@
+.view-mode {
+  td {
+    word-break: break-all;
+    > div {
+      text-align: left !important;
+    }
+  }
+}
+
+#viewMode .shorten {
+  display: table !important;
+  width: auto !important;
+  white-space: inherit;
+}
+
+.shorten {
+  display: block !important;
+  width: 300px !important;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.dataTables_paginate a {
+  padding: 6px 9px !important;
+  background: #ddd !important;
+  border-color: #ddd !important;
+  cursor: pointer;
+}
+
+.dataTables_paginate {
+  float: right;
+  text-align: right
+}
+
+.dataTables_length label {
+  font-weight: normal;
+  text-align: left;
+  white-space: nowrap;
+  display: inline-block;
+  max-width: 100%;
+  margin-bottom: 5px;
+}
+
+.dataTables_length select {
+  width: 75px;
+  display: inline-block;
+}
+
+
+@media (max-width: 767px) {
+  .dataTables_length {
+    float: none;
+  }
+}
+
+.table_footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.elips {
+  display: inline-block;
+  max-width: 90%;
+  height: 1.1em;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+

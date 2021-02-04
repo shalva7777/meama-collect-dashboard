@@ -1,0 +1,8 @@
+<ngx-smart-modal #confirmModal [identifier]="'confirmModal'" [dismissable]="false" >
+  <h3>Confirmation</h3>
+  <p *ngIf="confirmModal.hasData()">
+    {{ confirmModal.getData().body}}
+  </p>
+  <button class="btn btn-default" (click)="confirmModal.close()">Close</button>
+  <button *ngIf="confirmModal.hasData()" class="btn btn-success" (click)="confirmModal.getData().onOkClicked()">OK</button>
+</ngx-smart-modal>

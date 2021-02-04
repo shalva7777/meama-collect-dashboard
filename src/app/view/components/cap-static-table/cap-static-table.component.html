@@ -1,0 +1,26 @@
+<div class="horizontal-scroll">
+  <table id="datatable" class="table table-striped">
+    <thead>
+    <tr>
+      <th *ngFor="let column of columns">{{column.header}}</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr *ngFor="let item of items">
+      <td *ngFor="let column of columns">
+                <span *ngIf="!column.cellTemplate" class="rel" [ngClass]="{'cap-cursor': column.linkTo}"
+                      (click)="redirectTo(column.linkTo, item[column.field])">
+                    {{item[column.field]}}
+                  <i *ngIf="item[column.field] && column.linkTo" class="fa fa-external-link column-additional-data"></i>
+                </span>
+        <span *ngIf="column.cellTemplate" class="rel" [ngClass]="{'cap-cursor': column.linkTo}"
+              (click)="redirectTo(column.linkTo, item[column.field])">
+                  <div [ngTemplateOutlet]="column.cellTemplate"
+                       [ngTemplateOutletContext]="{column: column, item: item}"></div>
+                  <i *ngIf="item[column.field] && column.linkTo" class="fa fa-external-link column-additional-data"></i>
+                </span>
+      </td>
+    </tr>
+    </tbody>
+  </table>
+</div>

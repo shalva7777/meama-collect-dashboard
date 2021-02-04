@@ -1,0 +1,14 @@
+<div *ngIf="fieldObject" class="m-bottom-5"><span [ngClass]="{'required': capRequired}">{{label}}</span>
+  <select #selectElem class="form-control" (change)="getValue(selectElem.value)"
+          [ngClass]="{'ng-invalid': !selectElem.value}" [required]="capRequired" [disabled]="!enabled">
+    <option *ngIf="placeholder" value="" disabled selected>{{placeholder}}</option>
+    <option></option>
+    <option *ngFor="let p of values" [selected]="p && fieldObject && fieldObject[fieldName]
+    && ((!returnObject && p[optionValue] == fieldObject[fieldName]) || (returnObject && p[optionValue] == fieldObject[fieldName][optionValue]))"
+            [value]="p[optionValue]">{{p[optionLabel]}}
+    </option>
+  </select>
+  <small class="cap-alert" [hidden]="selectElem.value || !enabled">
+    {{alertText}}
+  </small>
+</div>
