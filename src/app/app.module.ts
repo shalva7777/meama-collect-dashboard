@@ -48,6 +48,7 @@ import {LanguageService} from './view/services/language.service';
 import {LanguageComponent} from './view/atom/language/language.component';
 import {CategoryService} from './view/services/category.service';
 import {CategoryComponent} from './view/atom/category/category.component';
+import {DragDropModule} from '@angular/cdk/drag-drop';
 
 @Injectable()
 export class XhrInterceptor implements HttpInterceptor {
@@ -100,6 +101,7 @@ export class XhrInterceptor implements HttpInterceptor {
     HttpClientModule,
     NgxSmartModalModule.forRoot(),
     NgMultiSelectDropDownModule.forRoot(),
+    DragDropModule,
   ],
   providers: [AuthService,
     AccessService,

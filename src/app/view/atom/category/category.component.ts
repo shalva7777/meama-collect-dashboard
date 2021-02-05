@@ -7,7 +7,8 @@ import {Utils} from '../../services/utils';
 import {CategoryService} from '../../services/category.service';
 import {LanguageService} from '../../services/language.service';
 import {Language} from '../../models/atom/language';
-import {StandartTranslation} from "../../models/standartTranslation";
+import {StandartTranslation} from '../../models/standartTranslation';
+import {CdkDragDrop, moveItemInArray} from '@angular/cdk/drag-drop';
 
 @Component({
   selector: 'app-category',
@@ -29,6 +30,8 @@ export class CategoryComponent implements OnInit {
 
   selectedCategory: Category;
   categories: Category [] = [];
+  categoriesForIndex: Category [] = [];
+  subCategoriesForIndex: Category [] = [];
   loader: PagingLoader = new PagingLoader(true, true);
   isManage = true;
   languages: Language[];
@@ -55,7 +58,7 @@ export class CategoryComponent implements OnInit {
         return response;
       }
     );
-  }
+  };
 
   getFilteredCategories = (request) => {
     return this.categoryService.findCategories(request.limit, request.offset, request.pathParams).then(
@@ -63,7 +66,7 @@ export class CategoryComponent implements OnInit {
         return response;
       }
     );
-  }
+  };
 
   openImageModal(item) {
     this.selectedCategory = (JSON.parse(JSON.stringify(item)) as Category);
@@ -199,5 +202,30 @@ export class CategoryComponent implements OnInit {
   //   });
   //   this.selectedFiles = undefined;
   // }
+
+  showIndexModal = () => {
+    this.categoryService.findCategories(-1, -1, null).then((response) => {
+      this.categoriesForIndex = response.resultList;
+      this.categoriesForIndex.sort((a, b) => (a.id > b.id) ? 1 : -1);
+      this.modalService.getModal('indexModal').open();
+    });
+  };
+
+  drop(event: CdkDragDrop<string[]>, b: boolean) {
+    if (b) {
+      moveItemInArray(this.categoriesForIndex, event.previousIndex, event.currentIndex);
+    } else {
+      moveItemInArray(this.subCategoriesForIndex, event.previousIndex, event.currentIndex);
+    }
+  }
+
+  showSubCategories(id) {
+    // tslint:disable-next-line:prefer-for-of
+    for (let i = 0; i < this.categoriesForIndex.length; i++) {
+      if (this.categoriesForIndex[i].parentCategoryId === id) {
+        this.subCategoriesForIndex.push(this.categoriesForIndex[i]);
+      }
+    }
+  }
 
 }
