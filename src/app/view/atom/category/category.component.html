@@ -26,8 +26,7 @@
   <h3>Index</h3>
 
   <div class="ngx-body" #indexForm>
-    <div style="margin-top: 60px; max-height: 559px; overflow: auto" cdkDropList class="example-list"
-         (cdkDropListDropped)="drop($event,true)">
+    <div style="margin-top: 60px; max-height: 559px; overflow: auto" cdkDropList class="example-list" (cdkDropListDropped)="drop($event,true)">
       <div class="example-box" *ngFor="let category of categoriesForIndex" cdkDrag>
         <div (click)="showSubCategories(category.id)" style="width: 6%">{{category.id}} </div>
         <div style="width: 67%">{{category.name}} </div>
@@ -42,32 +41,32 @@
       </div>
     </div>
 
-<!--    <div cdkDropListGroup>-->
-<!--      <div class="example-container">-->
-<!--        <h2>Available items</h2>-->
+    <div cdkDropListGroup>
+      <div class="example-container">
+        <h2>Available items</h2>
 
-<!--        <div-->
-<!--          cdkDropList-->
-<!--          [cdkDropListData]="items"-->
-<!--          class="example-list"-->
-<!--          cdkDropListSortingDisabled-->
-<!--          (cdkDropListDropped)="drop($event)">-->
-<!--          <div class="example-box" *ngFor="let item of items" cdkDrag>{{item}}</div>-->
-<!--        </div>-->
-<!--      </div>-->
+        <div
+          cdkDropList
+          [cdkDropListData]="items"
+          class="example-list"
+          cdkDropListSortingDisabled
+          (cdkDropListDropped)="drop($event)">
+          <div class="example-box" *ngFor="let item of items" cdkDrag>{{item}}</div>
+        </div>
+      </div>
 
-<!--      <div class="example-container">-->
-<!--        <h2>Shopping basket</h2>-->
+      <div class="example-container">
+        <h2>Shopping basket</h2>
 
-<!--        <div-->
-<!--          cdkDropList-->
-<!--          [cdkDropListData]="basket"-->
-<!--          class="example-list"-->
-<!--          (cdkDropListDropped)="drop($event)">-->
-<!--          <div class="example-box" *ngFor="let item of basket" cdkDrag>{{item}}</div>-->
-<!--        </div>-->
-<!--      </div>-->
-<!--    </div>-->
+        <div
+          cdkDropList
+          [cdkDropListData]="basket"
+          class="example-list"
+          (cdkDropListDropped)="drop($event)">
+          <div class="example-box" *ngFor="let item of basket" cdkDrag>{{item}}</div>
+        </div>
+      </div>
+    </div>
   </div>
   <button type="button" class="btn btn-default" (click)="indexModal.close()">Close</button>
   <button type="button" class="btn btn-success"
