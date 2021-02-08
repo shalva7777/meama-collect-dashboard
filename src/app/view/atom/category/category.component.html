@@ -23,47 +23,44 @@
 <!--</ngx-smart-modal>-->
 
 <ngx-smart-modal *ngIf="isManage" #indexModal [identifier]="'indexModal'" [dismissable]="false">
-  <h3>Index</h3>
+  <h3>Sorting Categories</h3>
 
   <div class="ngx-body" #indexForm>
-    <div style="margin-top: 60px; max-height: 559px; overflow: auto" cdkDropList class="example-list" (cdkDropListDropped)="drop($event,true)">
-      <div class="example-box" *ngFor="let category of categoriesForIndex" cdkDrag>
-        <div (click)="showSubCategories(category.id)" style="width: 6%">{{category.id}} </div>
-        <div style="width: 67%">{{category.name}} </div>
-      </div>
-    </div>
-
-    <div style="margin-top: 60px; max-height: 559px; overflow: auto" cdkDropList class="example-list"
-         (cdkDropListDropped)="drop($event,false)">
-      <div class="example-box" *ngFor="let category of subCategoriesForIndex" cdkDrag>
-        <div  style="width: 6%">{{category.id}} </div>
-        <div style="width: 67%">{{category.name}} </div>
-      </div>
-    </div>
-
     <div cdkDropListGroup>
       <div class="example-container">
-        <h2>Available items</h2>
+        <h2>Categories</h2>
 
         <div
+          [cdkDropListData]="categoriesForIndex"
           cdkDropList
-          [cdkDropListData]="items"
           class="example-list"
-          cdkDropListSortingDisabled
-          (cdkDropListDropped)="drop($event)">
-          <div class="example-box" *ngFor="let item of items" cdkDrag>{{item}}</div>
+          (cdkDropListDropped)="drop($event,true)">
+          <div class="example-box" *ngFor="let item of categoriesForIndex"
+               cdkDrag>
+            <div (click)="showSubCategories(item.id)">
+              <span style="width: 6%">{{item.id}} </span>
+              <span style="width: 6%">{{item.sortIndex}} </span>
+              <span style="width: 67%">{{item.name}} </span>
+            </div>
+          </div>
         </div>
       </div>
 
       <div class="example-container">
-        <h2>Shopping basket</h2>
+        <h2>Sub Categories</h2>
 
         <div
+          [cdkDropListData]="subCategoriesForIndex"
           cdkDropList
-          [cdkDropListData]="basket"
           class="example-list"
-          (cdkDropListDropped)="drop($event)">
-          <div class="example-box" *ngFor="let item of basket" cdkDrag>{{item}}</div>
+          (cdkDropListDropped)="drop($event,false)">
+          <div class="example-box" *ngFor="let item of subCategoriesForIndex" cdkDrag>
+            <div>
+              <span style="width: 6%">{{item.id}} </span>
+              <span style="width: 6%">{{item.sortIndex}} </span>
+              <span style="width: 67%">{{item.name}} </span>
+            </div>
+          </div>
         </div>
       </div>
     </div>
@@ -89,13 +86,12 @@
                    [capRequired]="false"
                    [returnObject]="true" fieldName="parentCategory" [fieldObject]="selectedCategory">
         </cap-combo>
-
+        <cap-combo label="Category Type" optionLabel="name" optionValue="id" [values]="categoryTypes"
+                   [capRequired]="true"
+                   [returnObject]="false" alertText="Cannot be empty"
+                   fieldName="categoryType" [fieldObject]="selectedCategory">
+        </cap-combo>
         <br>
-        <!--    <div class="m-bottom-5 f-bold">Additional fields in default language {{mainLanguage?.name}}</div>-->
-        <!--    <cap-input label="Name" fieldName="name" [fieldObject]="selectedTranslation"-->
-        <!--               fieldType="text" capPattern="^.{1,50}$" [capRequired]="true"-->
-        <!--               alertText="Min 2 character"></cap-input>-->
-        <!--    <cap-textarea label="Description" fieldName="description" [fieldObject]="selectedTranslation"></cap-textarea>-->
       </cap-tab>
       <cap-tab tabTitle="{{mes.language.name}}" [linkAble]="false" *ngFor="let mes of selectedCategory?.translations">
         <div>
@@ -134,17 +130,7 @@
       </h3>
     </div>
   </div>
-  <!--  <div class="cap-flex">-->
-  <!--    <label class="btn btn-default">-->
-  <!--      <input type="file" (change)="selectFile($event)">-->
-  <!--    </label>-->
-
-  <!--    <button class="btn btn-success" [disabled]="!selectedFiles"-->
-  <!--            (click)="upload()">Upload-->
-  <!--    </button>-->
-  <!--  </div>-->
   <div class="clearfix"></div>
-
   <cap-table
     (rowDoubleClick)="showAddEditModal($event)"
     (onAddButtonClick)="showAddModal($event)"
@@ -160,10 +146,11 @@
     (onReloadClick)="reloadAllData()"
   >
     <cap-column header="ID" field="id" filtered="number"></cap-column>
+    <cap-column header="Index" field="sortIndex" filtered="number"></cap-column>
     <cap-column header="Name" field="name" filtered="text">
       <ng-template #dataTableCell let-item="item">
         <div>
-          <span *ngIf="item.parentCategoryId">{{item.parentCategory.name + '->>>' + item.name}}</span>
+          <span *ngIf="item.parentCategoryId">{{item.parentCategory.name + '->>' + item.name}}</span>
           <span *ngIf="!item.parentCategoryId">{{item.name}}</span>
         </div>
       </ng-template>
@@ -176,9 +163,14 @@
         </div>
       </ng-template>
     </cap-column>
-    <cap-column header="Parent Category" field="parentCategory">
+    <!--    <cap-column header="Parent Category" field="parentCategory">-->
+    <!--      <ng-template #dataTableCell let-item="item">-->
+    <!--        <span *ngIf="item.parentCategory">{{item.parentCategory.name}}</span>-->
+    <!--      </ng-template>-->
+    <!--    </cap-column>-->
+    <cap-column header="Category Type" field="categoryType">
       <ng-template #dataTableCell let-item="item">
-        <span *ngIf="item.parentCategory">{{item.parentCategory.name}}</span>
+        <span *ngIf="item.type">{{item.type}}</span>
       </ng-template>
     </cap-column>
     <!--    <cap-column *ngIf="isManage" header="Translations">-->

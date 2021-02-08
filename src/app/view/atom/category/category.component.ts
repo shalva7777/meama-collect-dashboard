@@ -9,6 +9,7 @@ import {LanguageService} from '../../services/language.service';
 import {Language} from '../../models/atom/language';
 import {StandartTranslation} from '../../models/standartTranslation';
 import {CdkDragDrop, moveItemInArray} from '@angular/cdk/drag-drop';
+import {GeneralLookup} from '../../models/request/general-lookup';
 
 @Component({
   selector: 'app-category',
@@ -30,15 +31,16 @@ export class CategoryComponent implements OnInit {
 
   selectedCategory: Category;
   categories: Category [] = [];
+
   categoriesForIndex: Category [] = [];
   subCategoriesForIndex: Category [] = [];
+  allCategories: Category [] = [];
   loader: PagingLoader = new PagingLoader(true, true);
   isManage = true;
   languages: Language[];
 
   mainLanguage: Language;
-  selectedFiles: FileList;
-  currentFileUpload: File;
+  categoryTypes: GeneralLookup[] = [];
 
   ngOnInit() {
   }
@@ -49,6 +51,9 @@ export class CategoryComponent implements OnInit {
     });
     this.languageService.findMainLanguage().then((response) => {
       this.mainLanguage = response;
+    });
+    this.categoryService.getCategorytypes().then((response) => {
+      this.categoryTypes = response;
     });
   }
 
@@ -204,28 +209,60 @@ export class CategoryComponent implements OnInit {
   // }
 
   showIndexModal = () => {
+    this.subCategoriesForIndex = [];
+    this.categoriesForIndex = [];
     this.categoryService.findCategories(-1, -1, null).then((response) => {
-      this.categoriesForIndex = response.resultList;
-      this.categoriesForIndex.sort((a, b) => (a.id > b.id) ? 1 : -1);
+      this.allCategories = response.resultList;
+      // tslint:disable-next-line:prefer-for-of
+      for (let i = 0; i < response.resultList.length; i++) {
+        if (!response.resultList[i].parentCategoryId) {
+          this.categoriesForIndex.push(response.resultList[i]);
+        }
+      }
+      this.categoriesForIndex.sort((a, b) => (a.sortIndex > b.sortIndex) ? 1 : -1);
       this.modalService.getModal('indexModal').open();
     });
   };
 
-  drop(event: CdkDragDrop<string[]>, b: boolean) {
+  dropCategories(event: CdkDragDrop<string[]>, b: boolean) {
+    moveItemInArray(this.categoriesForIndex, event.previousIndex, event.currentIndex);
+  }
+
+  // cdkDragDisabled = false;
+
+  drop(event: CdkDragDrop<Category[], any>, b: boolean) {
     if (b) {
+      let categories = event.container.getSortedItems();
       moveItemInArray(this.categoriesForIndex, event.previousIndex, event.currentIndex);
     } else {
+      // this.cdkDragDisabled = true;
       moveItemInArray(this.subCategoriesForIndex, event.previousIndex, event.currentIndex);
     }
   }
 
   showSubCategories(id) {
+    this.subCategoriesForIndex = [];
     // tslint:disable-next-line:prefer-for-of
-    for (let i = 0; i < this.categoriesForIndex.length; i++) {
-      if (this.categoriesForIndex[i].parentCategoryId === id) {
-        this.subCategoriesForIndex.push(this.categoriesForIndex[i]);
+    for (let i = 0; i < this.allCategories.length; i++) {
+      if (this.allCategories[i].parentCategoryId === id) {
+        this.subCategoriesForIndex.push(this.allCategories[i]);
       }
     }
+    this.subCategoriesForIndex.sort((a, b) => (a.sortIndex > b.sortIndex) ? 1 : -1);
   }
+
+  saveIndexed = () => {
+    for (let i = 0; i < this.categoriesForIndex.length; i++) {
+      this.categoriesForIndex[i].sortIndex = i;
+    }
+    for (let i = 0; i < this.subCategoriesForIndex.length; i++) {
+      this.subCategoriesForIndex[i].sortIndex = i;
+      this.categoriesForIndex.push(this.subCategoriesForIndex[i]);
+    }
+    this.categoryService.index(this.categoriesForIndex).then((response) => {
+      this.modalService.getModal('indexModal').close();
+      this.loader = this.loader.load(true);
+    });
+  };
 
 }

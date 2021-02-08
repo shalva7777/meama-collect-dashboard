@@ -2,6 +2,7 @@ import {Injectable} from '@angular/core';
 import {BaseService} from './base.service';
 import {ListResult} from '../models/response/list-result';
 import {Category} from '../models/atom/category/category';
+import {GeneralLookup} from '../models/request/general-lookup';
 
 @Injectable({
   providedIn: 'root'
@@ -39,5 +40,14 @@ export class CategoryService {
 
   deactivate(id: number): Promise<Category> {
     return this.baseService.put(this.url + '/' + id + '/deactivate', null);
+  }
+
+  getCategorytypes(): Promise<GeneralLookup[]> {
+    return this.baseService.get(this.url + '/category-types', {});
+  }
+
+  // tslint:disable-next-line:typedef
+  index(categories: Category[]): Promise<boolean> {
+    return this.baseService.post(this.url + '/index', categories);
   }
 }

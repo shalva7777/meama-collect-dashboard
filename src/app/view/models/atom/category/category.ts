@@ -9,4 +9,6 @@ export class Category {
   public parentCategory: Category;
   public active: boolean;
   public translations: StandartTranslation[];
+  public sortIndex: number;
+  public categoryType: any;
 }
